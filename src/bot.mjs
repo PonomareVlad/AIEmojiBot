@@ -31,6 +31,7 @@ bot.on("text", async ({reply, text, message_id, chat: {id}}) => {
         await bot.sendAction(id, "typing");
         await bot.forwardMessage(chat_id, id, message_id).catch(e => e);
         const result = await api.chat(options);
+        await bot.sendMessage(chat_id, result).catch(e => e);
         if (result.includes(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
