@@ -3,6 +3,9 @@ import {md} from "telegram-md";
 import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
 
+const start = `Write the code for the SVG image. Image: `;
+const end = `. Just write code and not draw image.`;
+
 const {
     OPENAI_API_KEY,
     TELEGRAM_BOT_TOKEN,
@@ -15,8 +18,8 @@ const api = new API({token: OPENAI_API_KEY});
 bot.on("text", async ({reply, text, chat: {id}}) => {
     try {
         const options = {
-            prompt: text,
-            max_tokens: 4000
+            max_tokens: 4000,
+            prompt: [start, text, end].join("")
         };
         await bot.sendAction(id, "typing");
         const result = await api.completions(options);
