@@ -59,7 +59,13 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
                 const message = md.build(md.codeBlock(JSON.stringify(json, null, 2), "json"));
                 return reply.text(message, {parseMode: "MarkdownV2"});
             }
-        } else return reply.text(result);
+        } else {
+            if (typeof result === "object") {
+                const message = md.build(md.codeBlock(JSON.stringify(result, null, 2), "json"));
+                return reply.text(message, {parseMode: "MarkdownV2"});
+            }
+            return reply.text(result);
+        }
     } catch (e) {
         console.error(e);
         return reply.text(md.build(e.message));
