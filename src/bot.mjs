@@ -26,10 +26,8 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
             max_tokens,
             prompt: [before, text, after].join("")
         };
-        console.debug(text);
-        console.debug(await bot.sendAction(id, "typing"));
+        await bot.sendAction(id, "typing");
         const result = await api.chat(options);
-        console.debug(result);
         if (result.includes(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
