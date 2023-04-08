@@ -30,6 +30,7 @@ export default class API {
         const config = {method: "post", headers, body};
         const response = await fetch(url, config);
         const data = await response.json();
+        console.debug(data);
         return response.ok ? data.choices[0].text : data.error.message;
     }
 
@@ -55,6 +56,7 @@ export default class API {
         const config = {method: "post", headers, body};
         const response = await fetch(url, config);
         const data = await response.json();
+        console.debug(data);
         return response.ok ? data.choices[0].message.content : data.error.message;
     }
 
