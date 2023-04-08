@@ -18,6 +18,7 @@ export default async ({query: {id}, body}, res) => {
         if (!id || !body) return json({status: false});
         await bot.sendAction(id, "upload_document");
         const {data} = optimize(body, options);
+        await bot.sendDocument(chat_id, Buffer.from(data, "utf8"), {fileName: "sticker.svg"}).catch(e => e);
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
         const message = await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"});
