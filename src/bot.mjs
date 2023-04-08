@@ -2,9 +2,7 @@ import API from "./api.mjs";
 import {md} from "telegram-md";
 import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
-
-const start = `Write the code for the SVG image. Image: "`;
-const end = `". Just write code and not draw image.`;
+import config from "../config.json" assert {type: "json"};
 
 const {
     OPENAI_API_KEY,
@@ -12,17 +10,26 @@ const {
     VERCEL_URL = "ai-emoji-bot.vercel.app",
 } = process.env;
 
+const {
+    after,
+    before,
+    context,
+    tokens: max_tokens
+} = config || {};
+
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
-const api = new API({token: OPENAI_API_KEY});
+const api = new API({context, token: OPENAI_API_KEY});
 
 bot.on("text", async ({reply, text, chat: {id}}) => {
     try {
         const options = {
-            max_tokens: 4000,
-            prompt: [start, text, end].join("")
+            max_tokens,
+            prompt: [before, text, after].join("")
         };
-        await bot.sendAction(id, "typing");
-        const result = await api.completions(options);
+        console.debug(text);
+        console.debug(await bot.sendAction(id, "typing"));
+        const result = await api.chat(options);
+        console.debug(result);
         if (result.includes(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
@@ -35,7 +42,7 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
                 const message = md.build(md.codeBlock(JSON.stringify(json, null, 2), "json"));
                 return reply.text(message, {parseMode: "MarkdownV2"});
             }
-        } else return reply.text(md.build(result), {parseMode: "MarkdownV2"});
+        } else return reply.text(result);
     } catch (e) {
         console.error(e);
         return reply.text(md.build(e.message));
