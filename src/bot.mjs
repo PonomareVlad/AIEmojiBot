@@ -2,8 +2,8 @@ import API from "./api.mjs";
 import {md} from "telegram-md";
 import config from "../config.json";
 import TeleBot from "@ponomarevlad/telebot";
-import shortReply from "telebot/plugins/shortReply.js";
 import {parseCommands} from "telebot-utils";
+import shortReply from "telebot/plugins/shortReply.js";
 
 const {
     LOG_CHAT_ID,
