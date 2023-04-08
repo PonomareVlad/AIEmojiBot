@@ -1,6 +1,6 @@
 import API from "./api.mjs";
-import TeleBot from "telebot";
 import {md} from "telegram-md";
+import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
 
 const {

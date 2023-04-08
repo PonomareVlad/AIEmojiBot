@@ -1,8 +1,13 @@
+import TeleBot from "telebot";
 import {optimize} from "svgo";
-import {md} from "telegram-md";
-import bot from "../src/bot.mjs";
 import {serializeError} from "serialize-error";
 import {convert, options} from "../src/svg.mjs";
+
+const {
+    TELEGRAM_BOT_TOKEN,
+} = process.env;
+
+const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 
 export default async ({query: {id}, body}, {json}) => {
     try {
