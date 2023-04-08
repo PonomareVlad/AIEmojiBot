@@ -22,7 +22,7 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
     if (result.trim().startsWith(`<svg`)) {
         const options = {method: "post", body: result};
         const response = await fetch(`https://${VERCEL_URL}/api/send?id=${id}`, options);
-        const json = response.json();
+        const json = await response.json();
         console.debug(json);
         return reply.text(md.build(JSON.stringify(json)), {parseMode: "MarkdownV2"})
     }
