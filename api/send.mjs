@@ -13,6 +13,7 @@ export default async ({query: {id}, body}, {json}) => {
         await bot.sendMessage(id, data).catch(e => e);
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
+        console.debug(typeof sticker, sticker);
         return json(await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}));
     } catch (e) {
         console.error(e);
