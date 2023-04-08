@@ -45,7 +45,7 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
             bot.forwardMessage(chat_id, id, message_id).catch(e => e)
         ])
         const log = bot.sendMessage(chat_id, result).catch(e => e);
-        if (result.includes(`<svg`)) {
+        if (result?.includes?.(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
             const body = result.slice(start, end + `</svg>`.length);
