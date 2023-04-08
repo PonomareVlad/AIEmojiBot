@@ -21,8 +21,8 @@ export default async ({query: {id}, body}, res) => {
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
         const message = await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"});
-        const {message_id, chat: {id}} = message || {};
-        await bot.forwardMessage(chat_id, id, message_id).catch(e => e);
+        const {message_id, chat: {id: from_chat_id}} = message || {};
+        await bot.forwardMessage(chat_id, from_chat_id, message_id).catch(e => e);
         return json(message);
     } catch (e) {
         res.status(500);
