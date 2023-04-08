@@ -1,8 +1,8 @@
 import API from "./api.mjs";
 import {md} from "telegram-md";
+import config from "../config.json";
 import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
-import config from "../config.json" assert {type: "json"};
 
 const {
     OPENAI_API_KEY,
