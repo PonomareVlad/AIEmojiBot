@@ -6,7 +6,7 @@ import shortReply from "telebot/plugins/shortReply.js";
 const {
     OPENAI_API_KEY,
     TELEGRAM_BOT_TOKEN
-} = process.env || {};
+} = process.env;
 
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 
