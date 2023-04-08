@@ -27,9 +27,12 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
             const options = {method: "post", body: result};
             const url = `https://${VERCEL_URL}/api/send?id=${id}`;
             const response = await fetch(url, options);
-            return await response.json();
-        }
-        return reply.text(md.build(result), {parseMode: "MarkdownV2"});
+            const json = await response.json();
+            if (!response.ok) {
+                const message = md.build(md.codeBlock(JSON.stringify(json, null, 2), "json"));
+                return reply.text(message, {parseMode: "MarkdownV2"});
+            }
+        } else return reply.text(md.build(result), {parseMode: "MarkdownV2"});
     } catch (e) {
         console.error(e);
         return reply.text(md.build(e.message));
