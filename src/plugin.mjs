@@ -4,7 +4,8 @@ export default {
     element: {
         enter: (node, parentNode) => {
             if (node.name === "svg") {
-                const {width, height} = node?.attributes || {};
+                let {width, height, viewBox} = node?.attributes || {};
+                if (viewBox) [width, height] = viewBox.split(" ").splice(2);
                 svg = {width, height};
             } else {
                 if (node?.attributes?.stroke?.startsWith?.("url")) {
