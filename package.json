@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "telebot": "npm:@ponomarevlad/telebot@edge",
-    "telebot-vercel": "^1.0.1"
+    "telebot-vercel": "^1.0.1",
+    "telegram-md": "^1.2.3"
   },
   "overrides": {
     "telebot": "npm:@ponomarevlad/telebot@edge"
