@@ -12,17 +12,17 @@ const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 
 const api = new API({token: OPENAI_API_KEY});
 
-bot.on("text", async ({reply, text}) => {
+bot.on("text", async ({reply, text, chat: {id}}) => {
     const options = {
         prompt: text,
         max_tokens: 1000
     };
     const result = await api.completions(options);
-    /*if (result.trim().startsWith(`<svg`)) {
-        const blob = new Blob([result]);
-        const options = {fileName: "sticker.svg"};
-        return reply.file(blob, options);
-    }*/
+    if (result.trim().startsWith(`<svg`)) {
+        const options = {method: "post", body: result};
+        const response = await fetch(`https://ai-emoji-bot.vercel.app/api/send?id=${id}`, options);
+        return response.json();
+    }
     return reply.text(md.build(result), {parseMode: "MarkdownV2"});
 });
 
