@@ -16,12 +16,17 @@ export default async ({query: {id}, body}, res) => {
     const {json} = res;
     try {
         if (!id || !body) return json({status: false});
-        await bot.sendAction(id, "upload_document");
+        const action = bot.sendAction(id, "upload_document");
         const {data} = optimize(body, options);
-        await bot.sendDocument(chat_id, Buffer.from(data, "utf8"), {fileName: "sticker.svg"}).catch(e => e);
-        const sticker = await convert(data);
-        await bot.sendAction(id, "choose_sticker");
-        const message = await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"});
+        const [sticker] = await Promise.all([
+            convert(data),
+            bot.sendDocument(chat_id, Buffer.from(data, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
+            action
+        ]);
+        const [message] = await Promise.all([
+            bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}),
+            bot.sendAction(id, "choose_sticker")
+        ]);
         const {message_id, chat: {id: from_chat_id}} = message || {};
         await bot.forwardMessage(chat_id, from_chat_id, message_id).catch(e => e);
         return json(message);

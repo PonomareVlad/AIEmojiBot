@@ -9,11 +9,12 @@
     "tunnel": "cloudflared tunnel --url http://localhost:3000"
   },
   "dependencies": {
+    "@ponomarevlad/telebot": "edge",
     "form-data": "^4.0.0",
     "serialize-error": "^11.0.0",
     "svgo": "^3.0.2",
     "telebot": "^1.4.1",
-    "@ponomarevlad/telebot": "edge",
+    "telebot-utils": "^0.0.6",
     "telebot-vercel": "^1.0.1",
     "telegram-md": "^1.2.3"
   },
