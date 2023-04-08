@@ -18,13 +18,15 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
         prompt: text,
         max_tokens: 1000
     };
+    await bot.sendAction(id, "typing");
     const result = await api.completions(options);
     if (result.trim().startsWith(`<svg`)) {
         const options = {method: "post", body: result};
         const response = await fetch(`https://${VERCEL_URL}/api/send?id=${id}`, options);
         const json = await response.json();
         console.debug(json);
-        return reply.text(md.build(JSON.stringify(json)), {parseMode: "MarkdownV2"})
+        const message = md.build(`Send result: ${md.codeBlock(JSON.stringify(json), "json")}`);
+        return reply.text(message, {parseMode: "MarkdownV2"});
     }
     return reply.text(md.build(result), {parseMode: "MarkdownV2"});
 });
