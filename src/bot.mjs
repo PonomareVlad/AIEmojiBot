@@ -27,9 +27,9 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
             const json = await response.json();
             console.debug(json);
             const message = md.build(`Send result: ${md.codeBlock(JSON.stringify(json), "json")}`);
-            return reply.text(message, {parseMode: "MarkdownV2"});
+            return reply.text(message);
         }
-        return reply.text(md.build(result), {parseMode: "MarkdownV2"});
+        return reply.text(md.build(result));
     } catch (e) {
         console.error(e);
         return reply.text(e.message);
