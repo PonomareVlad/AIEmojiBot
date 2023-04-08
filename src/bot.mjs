@@ -23,7 +23,10 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
         };
         await bot.sendAction(id, "typing");
         const result = await api.completions(options);
-        if (result.trim().startsWith(`<svg`)) {
+        if (result.includes(`<svg`)) {
+            const start = result.indexOf(`<svg`);
+            const end = result.indexOf(`</svg>`);
+            const body = result.splice(start, end - start + `</svg>`.length);
             const options = {method: "post", body: result};
             const url = `https://${VERCEL_URL}/api/send?id=${id}`;
             const response = await fetch(url, options);
