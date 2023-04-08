@@ -5,7 +5,8 @@ import shortReply from "telebot/plugins/shortReply.js";
 
 const {
     OPENAI_API_KEY,
-    TELEGRAM_BOT_TOKEN
+    TELEGRAM_BOT_TOKEN,
+    VERCEL_URL = "ai-emoji-bot.vercel.app",
 } = process.env;
 
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
@@ -20,7 +21,7 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
     const result = await api.completions(options);
     if (result.trim().startsWith(`<svg`)) {
         const options = {method: "post", body: result};
-        const response = await fetch(`https://ai-emoji-bot.vercel.app/api/send?id=${id}`, options);
+        const response = await fetch(`https://${VERCEL_URL}/api/send?id=${id}`, options);
         return response.json();
     }
     return reply.text(md.build(result), {parseMode: "MarkdownV2"});
