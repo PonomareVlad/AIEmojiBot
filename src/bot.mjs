@@ -26,7 +26,7 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
             const response = await fetch(`https://${VERCEL_URL}/api/send?id=${id}`, options);
             const json = await response.json();
             console.debug(json);
-            const message = md.build(`Send result: ${md.codeBlock(JSON.stringify(json), "json")}`);
+            const message = md.build(`Send result: ${JSON.stringify(json, null, 2)}`);
             return reply.text(message);
         }
         return reply.text(md.build(result));

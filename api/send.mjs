@@ -13,8 +13,9 @@ export default async ({query: {id}, body}, {json}) => {
         // await bot.sendMessage(id, message, {parseMode: "MarkdownV2"}).catch(e => e);
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
-        return json(await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}).catch(e => e));
+        return json(await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}));
     } catch (e) {
+        console.error(e);
         return json(serializeError(e));
     }
 }
