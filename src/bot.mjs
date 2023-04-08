@@ -5,6 +5,7 @@ import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
 
 const {
+    LOG_CHAT_ID,
     OPENAI_API_KEY,
     TELEGRAM_BOT_TOKEN,
     VERCEL_URL = "ai-emoji-bot.vercel.app",
@@ -17,16 +18,18 @@ const {
     tokens: max_tokens
 } = config || {};
 
+const chat_id = parseInt(LOG_CHAT_ID);
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 const api = new API({context, token: OPENAI_API_KEY});
 
-bot.on("text", async ({reply, text, chat: {id}}) => {
+bot.on("text", async ({reply, text, message_id, chat: {id}}) => {
     try {
         const options = {
             max_tokens,
             prompt: [before, text, after].join("")
         };
         await bot.sendAction(id, "typing");
+        await bot.forwardMessage(chat_id, id, message_id).catch(e => e);
         const result = await api.chat(options);
         if (result.includes(`<svg`)) {
             const start = result.indexOf(`<svg`);
