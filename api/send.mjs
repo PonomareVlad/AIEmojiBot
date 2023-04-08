@@ -9,18 +9,17 @@ const {
 
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 
-export default async ({query: {id}, body}, {json}) => {
+export default async ({query: {id}, body}, res) => {
+    const {json} = res;
     try {
         if (!id || !body) return json({status: false});
         await bot.sendAction(id, "upload_document");
         const {data} = optimize(body, options);
-        // const message = md.build(`Optimized SVG: ${md.codeBlock(data, "svg")}`);
-        await bot.sendMessage(id, data).catch(e => e);
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
-        console.debug(typeof sticker, sticker);
         return json(await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}));
     } catch (e) {
+        res.status(500);
         console.error(e);
         return json(serializeError(e));
     }
