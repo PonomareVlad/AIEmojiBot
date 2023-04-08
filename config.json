@@ -3,5 +3,5 @@
   "before": "Write the code for the SVG image. Image: \"",
   "after": "\". Don’t use percentages in SVG properties, only float numbers. Just write code and not draw image.",
   "api": "https://api.openai.com/v1/",
-  "tokens": 4000
+  "tokens": 3900
 }
