@@ -33,11 +33,13 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
             max_tokens,
             prompt: [before, text, after].join("")
         };
+        const url = `https://${VERCEL_URL}/api/send?id=${id}`;
         setTimeout(() => bot.sendAction(id, "typing"), 5 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 10 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 15 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
         const [result] = await Promise.all([
+            fetch(url),
             api.chat(options),
             bot.sendAction(id, "typing"),
             bot.forwardMessage(chat_id, id, message_id).catch(e => e)
@@ -48,7 +50,6 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
             const end = result.indexOf(`</svg>`);
             const body = result.slice(start, end + `</svg>`.length);
             const options = {method: "post", body};
-            const url = `https://${VERCEL_URL}/api/send?id=${id}`;
             const [response] = await Promise.all([
                 fetch(url, options),
                 log
