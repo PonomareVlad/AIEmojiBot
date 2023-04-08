@@ -39,8 +39,8 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
         setTimeout(() => bot.sendAction(id, "typing"), 15 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
         const [result] = await Promise.all([
-            fetch(url),
             api.chat(options),
+            fetch(url),
             bot.sendAction(id, "typing"),
             bot.forwardMessage(chat_id, id, message_id).catch(e => e)
         ])
