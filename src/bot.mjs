@@ -26,8 +26,8 @@ bot.on("text", async ({reply, text, chat: {id}}) => {
         if (result.includes(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
-            const body = result.splice(start, end - start + `</svg>`.length);
-            const options = {method: "post", body: result};
+            const body = result.slice(start, end + `</svg>`.length);
+            const options = {method: "post", body};
             const url = `https://${VERCEL_URL}/api/send?id=${id}`;
             const response = await fetch(url, options);
             const json = await response.json();
