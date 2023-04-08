@@ -1,7 +1,7 @@
 {
   "context": "You are a useful graphic designer, professionally designing images as SVG code.",
   "before": "Write the code for the SVG image. Image: \"",
-  "after": "\". Don’t use SVG layer filters. Use SVG 1.1 version. Just write code and not draw image.",
+  "after": "\". Don’t use SVG layer filters. Use SVG 1.1 version. Just write code and not draw image. Write no comments, just start answer with <svg and end with </svg>.",
   "api": "https://api.openai.com/v1/",
   "tokens": 3900
 }
