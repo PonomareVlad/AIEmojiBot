@@ -1,6 +1,26 @@
+import plugin from "./plugin.mjs";
 import FormData from "form-data";
 
 const {API_URL} = process.env;
+
+export const options = {
+    multipass: true, plugins: [
+        {
+            name: 'preset-default',
+            params: {
+                overrides: {
+                    inlineStyles: {
+                        onlyMatchedOnce: false,
+                    },
+                },
+            },
+        },
+        "removeRasterImages",
+        "removeStyleElement",
+        "removeScriptElement",
+        "convertStyleToAttrs",
+        {name: "test", fn: () => plugin}]
+};
 
 export const convert = (svg = "") => {
     const form = new FormData();
