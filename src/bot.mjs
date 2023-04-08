@@ -3,8 +3,8 @@ import {md} from "telegram-md";
 import TeleBot from "@ponomarevlad/telebot";
 import shortReply from "telebot/plugins/shortReply.js";
 
-const start = `Write the code for the SVG image. Image: `;
-const end = `. Just write code and not draw image.`;
+const start = `Write the code for the SVG image. Image: "`;
+const end = "`. Just write code and not draw image.`;
 
 const {
     OPENAI_API_KEY,
