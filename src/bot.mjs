@@ -33,6 +33,8 @@ bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
             max_tokens,
             prompt: [before, text, after].join("")
         };
+        setTimeout(() => bot.sendAction(id, "typing"), 10 * 1000);
+        setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
         const [result] = await Promise.all([
             api.chat(options),
             bot.sendAction(id, "typing"),
