@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "form-data": "^4.0.0",
+    "serialize-error": "^11.0.0",
     "svgo": "^3.0.2",
     "telebot": "npm:@ponomarevlad/telebot@edge",
     "telebot-vercel": "^1.0.1",
