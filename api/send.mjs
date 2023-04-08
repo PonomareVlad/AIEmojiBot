@@ -10,7 +10,7 @@ export default async ({query: {id}, body}, {json}) => {
         await bot.sendAction(id, "upload_document");
         const {data} = optimize(body, options);
         // const message = md.build(`Optimized SVG: ${md.codeBlock(data, "svg")}`);
-        // await bot.sendMessage(id, message, {parseMode: "MarkdownV2"}).catch(e => e);
+        await bot.sendMessage(id, data).catch(e => e);
         const sticker = await convert(data);
         await bot.sendAction(id, "choose_sticker");
         return json(await bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}));
