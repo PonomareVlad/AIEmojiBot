@@ -21,6 +21,15 @@ export default {
 
                 case "animate":
                     if (!node.attributes) break;
+                    if (typeof node?.attributes?.dur === "string") {
+                        if (node.attributes.dur.includes("ms")) {
+                            const dur = parseFloat(node.attributes.dur.replace("ms"));
+                            if (dur > 3000) node.attributes.dur = "3000ms";
+                        } else if (node.attributes.dur.includes("s")) {
+                            const dur = parseFloat(node.attributes.dur.replace("s"));
+                            if (dur > 3) node.attributes.dur = "3s";
+                        }
+                    }
                     if (!node.attributes.from || !node.attributes.to) {
                         if (!node.attributes.values) break;
                         const values = node.attributes.values.split(";");
