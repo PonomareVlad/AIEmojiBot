@@ -38,6 +38,21 @@ export default {
                         if (!node.attributes.from) node.attributes.from = parseFloat(from.trim());
                         if (!node.attributes.to) node.attributes.to = parseFloat(to.trim());
                     }
+                    if (node?.attributes?.from?.includes?.(" ")) {
+                        node.attributes.from = node.attributes.from.split(" ").at(0);
+                    }
+                    if (node?.attributes?.to?.includes?.(" ")) {
+                        node.attributes.to = node.attributes.to.split(" ").at(0);
+                    }
+                    switch (node.attributes.attributeName) {
+                        case "stroke-dasharray":
+                            if (node.attributes.from?.includes?.(",")) {
+                                node.attributes.from = node.attributes.from.replace(",", ".");
+                            }
+                            if (node.attributes.to?.includes?.(",")) {
+                                node.attributes.to = node.attributes.to.replace(",", ".");
+                            }
+                    }
                     break;
 
                 default:
