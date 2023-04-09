@@ -9,16 +9,14 @@ export const options = {
             name: 'preset-default',
             params: {
                 overrides: {
-                    inlineStyles: {
-                        onlyMatchedOnce: false,
-                    },
+                    inlineStyles: false,
                 },
             },
         },
         "removeRasterImages",
         // "removeStyleElement",
         "removeScriptElement",
-        "convertStyleToAttrs",
+        // "convertStyleToAttrs",
         {name: "test", fn: () => plugin}]
 };
 
