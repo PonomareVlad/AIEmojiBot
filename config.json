@@ -1,7 +1,7 @@
 {
   "context": "You are a useful graphic designer, professionally designing images as SVG code.",
-  "before": "Don’t use SVG layer filters. Don't use CSS <style> animations, only SVG Animations (SMIL). Just write code and not draw image. Write no comments, just start answer with <svg and end with </svg>. All animations must not be longer than 3 seconds. Write the code for the SVG image:\r\n\r\n",
-  "after": "",
+  "before": "Write the code for the SVG image:\r\n\r\n",
+  "after": "\r\n\r\nDon’t use SVG layer filters. Don't use CSS <style> animations, only SVG Animations (SMIL). All animations must not be longer than 3 seconds. Just write code and not draw image. Write no comments, just start answer with <svg and end with </svg>.",
   "api": "https://api.openai.com/v1/",
   "tokens": 3900
 }
