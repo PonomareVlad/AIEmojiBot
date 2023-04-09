@@ -21,7 +21,7 @@ export default async ({query: {id}, body}, res) => {
         const {data} = optimize(svg, options);
         const [sticker] = await Promise.all([
             convert(data),
-            bot.sendDocument(chat_id, Buffer.from(data, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
+            bot.sendDocument(chat_id, Buffer.from(body, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
             action
         ]);
         const [message] = await Promise.all([

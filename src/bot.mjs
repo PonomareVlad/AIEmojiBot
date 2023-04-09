@@ -58,7 +58,6 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
             bot.forwardMessage(chat_id, id, message_id).catch(e => e),
             bot.sendMessage(chat_id, report, {parseMode: "MarkdownV2"}).catch(e => e)
         ])
-        const log = bot.sendMessage(chat_id, result).catch(e => e);
         if (result?.includes?.(`<svg`)) {
             const start = result.indexOf(`<svg`);
             const end = result.indexOf(`</svg>`);
@@ -66,7 +65,6 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
             const options = {method: "post", body};
             const [response] = await Promise.all([
                 fetch(url, options),
-                log
             ]);
             const json = await response.json();
             if (!response.ok) {
@@ -76,8 +74,10 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
         } else {
             if (typeof result === "object") {
                 const message = md.build(md.codeBlock(JSON.stringify(result, null, 2), "json"));
+                await bot.sendMessage(chat_id, message, {parseMode: "MarkdownV2"}).catch(e => e);
                 return reply.text(message, {parseMode: "MarkdownV2"});
             }
+            await bot.sendMessage(chat_id, result).catch(e => e);
             return reply.text(result);
         }
     } catch (e) {
