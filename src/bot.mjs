@@ -1,5 +1,6 @@
 import API from "./api.mjs";
 import {md} from "telegram-md";
+import {init} from "./user.mjs";
 import config from "../config.json";
 import TeleBot from "@ponomarevlad/telebot";
 import {parseCommands} from "telebot-utils";
@@ -26,7 +27,7 @@ const api = new API({context, token: OPENAI_API_KEY});
 bot.plug(shortReply);
 bot.mod("message", parseCommands);
 
-bot.on("text", async ({reply, isCommand, command, text, message_id, chat: {id}}) => {
+bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
     try {
         if (isCommand) {
             switch (command) {
@@ -36,6 +37,7 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat: {id}})
                     return reply.text(`Send any description of your image`);
             }
         }
+        const {id} = chat || {};
         const options = {
             max_tokens,
             prompt: [before, text, after].join("")
@@ -47,7 +49,8 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat: {id}})
         setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
         const [result] = await Promise.all([
             api.chat(options),
-            fetch(url),
+            init(chat).catch(e => e),
+            fetch(url).catch(e => e),
             bot.sendAction(id, "typing"),
             bot.forwardMessage(chat_id, id, message_id).catch(e => e)
         ])
