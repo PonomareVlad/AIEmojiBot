@@ -49,14 +49,14 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
         setTimeout(() => bot.sendAction(id, "typing"), 10 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 15 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
-        const report = md.build(md.codeBlock(JSON.stringify(tokenizer.encode(options.prompt), null, 2), "json"));
+        const {bpe = []} = tokenizer.encode(options.prompt);
         const [result] = await Promise.all([
             api.chat(options),
             init(chat).catch(e => e),
             fetch(url).catch(e => e),
             bot.sendAction(id, "typing"),
             bot.forwardMessage(chat_id, id, message_id).catch(e => e),
-            bot.sendMessage(chat_id, report, {parseMode: "MarkdownV2"}).catch(e => e)
+            bot.sendMessage(chat_id, `Tokens: ${bpe.length}`, {parseMode: "MarkdownV2"}).catch(e => e)
         ])
         if (result?.includes?.(`<svg`)) {
             const start = result.indexOf(`<svg`);
