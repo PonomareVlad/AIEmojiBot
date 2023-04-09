@@ -55,8 +55,8 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
             init(chat).catch(e => e),
             fetch(url).catch(e => e),
             bot.sendAction(id, "typing"),
-            bot.sendMessage(chat_id, report).catch(e => e),
-            bot.forwardMessage(chat_id, id, message_id).catch(e => e)
+            bot.forwardMessage(chat_id, id, message_id).catch(e => e),
+            bot.sendMessage(chat_id, report, {parseMode: "MarkdownV2"}).catch(e => e)
         ])
         const log = bot.sendMessage(chat_id, result).catch(e => e);
         if (result?.includes?.(`<svg`)) {
