@@ -17,7 +17,8 @@ export default async ({query: {id}, body}, res) => {
     try {
         if (!id || !body) return json({status: false});
         const action = bot.sendAction(id, "upload_document");
-        const {data} = optimize(body, options);
+        const svg = body.replaceAll("xlink:href", "href");
+        const {data} = optimize(svg, options);
         const [sticker] = await Promise.all([
             convert(data),
             bot.sendDocument(chat_id, Buffer.from(data, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
