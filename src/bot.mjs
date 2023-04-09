@@ -26,9 +26,16 @@ const api = new API({context, token: OPENAI_API_KEY});
 bot.plug(shortReply);
 bot.mod("message", parseCommands);
 
-bot.on("text", async ({reply, isCommand, text, message_id, chat: {id}}) => {
+bot.on("text", async ({reply, isCommand, command, text, message_id, chat: {id}}) => {
     try {
-        if (isCommand) return reply.text(`Send any description of your image`);
+        if (isCommand) {
+            switch (command) {
+                case "function":
+                    return reply.text(`Invocations: ${globalThis.invocations}\r\nDate: ${globalThis.date}`);
+                default:
+                    return reply.text(`Send any description of your image`);
+            }
+        }
         const options = {
             max_tokens,
             prompt: [before, text, after].join("")
