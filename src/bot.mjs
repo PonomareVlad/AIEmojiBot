@@ -2,6 +2,7 @@ import API from "./api.mjs";
 import {md} from "telegram-md";
 import {init} from "./user.mjs";
 import config from "../config.json";
+import GPT3Tokenizer from 'gpt3-tokenizer';
 import TeleBot from "@ponomarevlad/telebot";
 import {parseCommands} from "telebot-utils";
 import shortReply from "telebot/plugins/shortReply.js";
@@ -22,6 +23,7 @@ const {
 
 const chat_id = parseInt(LOG_CHAT_ID);
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
+const tokenizer = new GPT3Tokenizer({type: "gpt3"});
 const api = new API({context, token: OPENAI_API_KEY});
 
 bot.plug(shortReply);
@@ -47,11 +49,13 @@ bot.on("text", async ({reply, isCommand, command, text, message_id, chat}) => {
         setTimeout(() => bot.sendAction(id, "typing"), 10 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 15 * 1000);
         setTimeout(() => bot.sendAction(id, "typing"), 20 * 1000);
+        const report = md.build(md.codeBlock(JSON.stringify(tokenizer.encode(options.prompt), null, 2), "json"));
         const [result] = await Promise.all([
             api.chat(options),
             init(chat).catch(e => e),
             fetch(url).catch(e => e),
             bot.sendAction(id, "typing"),
+            bot.sendMessage(chat_id, report).catch(e => e),
             bot.forwardMessage(chat_id, id, message_id).catch(e => e)
         ])
         const log = bot.sendMessage(chat_id, result).catch(e => e);
