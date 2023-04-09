@@ -13,10 +13,11 @@ export const options = {
                 },
             },
         },
+        "removeXMLNS",
         "removeRasterImages",
-        // "removeStyleElement",
+        "removeStyleElement",
         "removeScriptElement",
-        // "convertStyleToAttrs",
+        "convertStyleToAttrs",
         {name: "test", fn: () => plugin}]
 };
 
