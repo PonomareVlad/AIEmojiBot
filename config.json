@@ -1,7 +1,7 @@
 {
-  "context": "You are a useful graphic designer, professionally designing images as SVG code.",
-  "before": "Write the code for the SVG image. Image: \"",
-  "after": "\". Don’t use SVG layer filters. Just write code and not draw image. Write no comments, just start answer with <svg and end with </svg>.",
+  "context": "You are a useful graphic designer, professionally designing images as SVG code. Don’t use SVG layer filters. Don't use CSS <style> animations, only SVG Animations (SMIL). Just write code and not draw image. Write no comments, just start answer with <svg and end with </svg>.",
+  "before": "Write the code for the SVG image:\r\n\r\n",
+  "after": "",
   "api": "https://api.openai.com/v1/",
   "tokens": 3900
 }
