@@ -9,7 +9,9 @@ export const options = {
             name: 'preset-default',
             params: {
                 overrides: {
-                    inlineStyles: false,
+                    inlineStyles: {
+                        onlyMatchedOnce: false,
+                    },
                 },
             },
         },
