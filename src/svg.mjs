@@ -16,7 +16,7 @@ export const options = {
             },
         },
         "removeRasterImages",
-        "removeStyleElement",
+        // "removeStyleElement",
         "removeScriptElement",
         "convertStyleToAttrs",
         {name: "test", fn: () => plugin}]
