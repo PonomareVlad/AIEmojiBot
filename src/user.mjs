@@ -55,7 +55,7 @@ export default class User {
 
 class UserMessages {
 
-    user = {data: {messages: []} = {}};
+    user = {data: {messages: []}};
 
     constructor(user = {}) {
         this.user = user || {};
