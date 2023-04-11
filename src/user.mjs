@@ -69,6 +69,10 @@ class UserMessages {
         return this.history.length;
     }
 
+    set length(value) {
+        return this.history.length = value;
+    }
+
     get tokens() {
         return this.history.reduce((sum = 0, {content, role} = {}) => {
             return sum += tokenizer.encode(["", content, role, ""].join(" ")).bpe.length;

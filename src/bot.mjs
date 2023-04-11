@@ -61,7 +61,8 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
             case "start":
                 const user = await User.fetch(chat);
                 if (user?.messages?.length) {
-                    await user.updateUser({messages: []});
+                    user.messages.length = 0;
+                    await user.updateUser();
                     return reply.text(`You started a new conversation, the story was deleted`);
                 }
                 return reply.text(`Send any description of your image`);
