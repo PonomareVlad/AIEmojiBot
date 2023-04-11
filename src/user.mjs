@@ -70,7 +70,9 @@ class UserMessages {
     }
 
     get tokens() {
-        return this.history.reduce(this.constructor.sumTokens, 0);
+        return this.history.reduce((sum = 0, {content, role} = {}) => {
+            return sum += tokenizer.encode(["", content, role, ""].join(" ")).bpe.length;
+        }, 0);
     }
 
     get system() {
@@ -82,8 +84,6 @@ class UserMessages {
         if (typeof content === "object") return Object.assign(this.system, {content});
         return this.system.content = content;
     }
-
-    static sumTokens = (sum = 0, {content, role} = {}) => sum += tokenizer.encode([content, role].join("")).bpe.length;
 
     push(data = {}) {
         const {
