@@ -31,8 +31,8 @@ export default class User {
         const {id} = this.data;
         data.date = new Date();
         const {messages} = this;
-        data.messages = messages;
         await globalThis.mongoReady;
+        data.messages = messages.history;
         const users = globalThis.db.collection("users");
         await users.updateOne({id}, {$set: this.constructor.sanitise(data)}, {upsert: true});
         this.data = await users.findOne({id});
@@ -55,31 +55,31 @@ export default class User {
 
 class UserMessages {
 
-    messages = [];
+    history = [];
 
     constructor(messages = []) {
-        this.messages = messages || [];
+        this.history = messages || [];
     }
 
     get length() {
-        return this.messages.length;
+        return this.history.length;
     }
 
     get tokens() {
-        return this.messages.reduce(this.constructor.sumTokens, 0);
+        return this.history.reduce(this.constructor.sumTokens, 0);
     }
 
     get system() {
-        return this.messages.find(({role} = {}) => role === "system");
+        return this.history.find(({role} = {}) => role === "system");
     }
 
     set system(content) {
-        if (!this.system) this.messages.unshift({role: "system", content: ""});
+        if (!this.system) this.history.unshift({role: "system", content: ""});
         if (typeof content === "object") return Object.assign(this.system, {content});
         return this.system.content = content;
     }
 
-    static sumTokens = (sum = 0, {content} = {}) => sum += tokenizer.encode(content).bpe.length;
+    static sumTokens = (sum = 0, {content, role} = {}) => sum += tokenizer.encode([content, role].join("")).bpe.length;
 
     push(data = {}) {
         const {
@@ -90,23 +90,7 @@ class UserMessages {
             content,
             role
         };
-        return this.messages.push(message);
-    }
-
-    toJSON() {
-        return this.messages;
-    }
-
-    toBSON() {
-        return this.toJSON();
-    }
-
-    toArray() {
-        return this.toJSON();
-    }
-
-    toString() {
-        return JSON.stringify(this, null, 2);
+        return this.history.push(message);
     }
 
 }

@@ -39,22 +39,32 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         } = message || {};
         const user = await User.fetch(chat);
         if (isCommand) return this.command(message);
-        const messages = user.messages;
-        if (!messages.system) messages.system = context;
-        messages.push({content: text});
-        const {length, tokens} = messages;
+        if (!user.messages.system) user.messages.system = context;
+        user.messages.push({content: text});
+        const {
+            length,
+            tokens,
+            history: messages
+        } = user.messages;
         const max_tokens = maxTokens - tokens;
         console.debug("Messages:", {length, tokens});
         const result = await api.chat({max_tokens, messages});
-        messages.push({content: result, role: "assistant"});
+        user.messages.push({content: result, role: "assistant"});
         await user.updateUser();
         return reply.text(md.build(result), {parseMode: "MarkdownV2"});
     }
 
-    command({command, reply = {}} = {}) {
+    async command({command, chat = {}, reply = {}} = {}) {
         switch (command) {
             case "function":
                 return reply.text(`Invocations: ${globalThis.invocations}\r\nDate: ${globalThis.date}`);
+            case "start":
+                const user = await User.fetch(chat);
+                if (user?.messages?.length) {
+                    await user.updateUser({messages: []});
+                    return reply.text(`You started a new conversation, the story was deleted`);
+                }
+                return reply.text(`Send any description of your image`);
             default:
                 return reply.text(`Send any description of your image`);
         }
