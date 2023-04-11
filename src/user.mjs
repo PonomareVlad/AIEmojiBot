@@ -9,7 +9,7 @@ export default class User {
 
     constructor(data = {}) {
         Object.assign(this.data, data);
-        this.messages = new UserMessages(data.messages);
+        this.messages = new UserMessages(data);
     }
 
     static sanitise({id, _id, ...data} = {}) {
@@ -54,11 +54,14 @@ export default class User {
 }
 
 class UserMessages {
+    user = {messages: []};
 
-    history = [];
+    constructor(user = {}) {
+        this.user = user || {};
+    }
 
-    constructor(messages = []) {
-        this.history = messages || [];
+    get history() {
+        return this.user.messages;
     }
 
     get length() {
