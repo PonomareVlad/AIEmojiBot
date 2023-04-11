@@ -3,5 +3,5 @@
   "before": "Write the code for the SVG image:\r\n\r\n",
   "after": ".\r\n\r\nDon't use SVG layer filters. Don't use CSS <style> animations, only SVG Animations (SMIL). Use the <animate> tag instead of the <animateMotion> tag. All animations must not be longer than 3 seconds. Just write code, don't draw a picture. Don't write comments, just start your answer with <svg and end with </svg>.",
   "api": "https://api.openai.com/v1/",
-  "tokens": 3900
+  "tokens": 4000
 }
