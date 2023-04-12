@@ -60,7 +60,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         const max_tokens = maxTokens - tokens;
         console.debug("Messages:", {length, tokens});
         if (max_tokens < 1000) return reply.text(strings.limit);
-        const result = await api.chat({max_tokens, messages: history});
+        const result = await api.chat({max_tokens: 1000, messages: history});
         user.messages.push({content: result, role: "assistant"});
         const structure = marked.lexer(result, {});
         const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
