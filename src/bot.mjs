@@ -85,6 +85,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                 }
                 return messages;
             }, [[]]);
+            await user.updateUser();
             await messages.reduce((promise, message) => {
                 if (Array.isArray(message))
                     return message.length ? promise.then(() => {
@@ -98,7 +99,6 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                     return fetch(url, options);
                 });
             }, Promise.resolve());
-            await user.updateUser();
         } catch (e) {
             console.error(e);
             await reply.text(md.build(e.message));
