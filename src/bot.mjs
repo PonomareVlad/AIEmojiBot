@@ -2,6 +2,7 @@ import API from "./api.mjs";
 import User from "./user.mjs";
 import {md} from "telegram-md";
 import config from "../config.json";
+import decode from "html-entities-decoder";
 import TeleBot from "@ponomarevlad/telebot";
 import {marked} from "@ponomarevlad/marked";
 import shortReply from "telebot/plugins/shortReply.js";
@@ -68,7 +69,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                             case "codespan":
                                 return md.inlineCode(text)
                             default:
-                                return raw || text;
+                                return decode(text || raw);
                         }
                     }), `\r\n`);
                     break;
@@ -77,7 +78,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                     messages.push([]);
                     break;
                 default:
-                    messages.at(-1).push(raw || text);
+                    messages.at(-1).push(decode(text || raw));
             }
             return messages;
         }, [[]]);
