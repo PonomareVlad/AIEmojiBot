@@ -6,7 +6,6 @@ import TeleBot from "@ponomarevlad/telebot";
 import {marked} from "@ponomarevlad/marked";
 import shortReply from "telebot/plugins/shortReply.js";
 import {NewMethodsMixin, parseCommands} from "telebot-utils";
-import bot from "./bot.old.mjs";
 
 const {
     context,
