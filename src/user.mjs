@@ -62,7 +62,7 @@ class UserMessages {
     }
 
     get history() {
-        return this.user.data.messages;
+        return this.user.data.messages ??= [];
     }
 
     get length() {
