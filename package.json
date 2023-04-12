@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vc dev",
     "env": "vercel env pull .env",
+    "start-env": "dotenv npm start",
     "start": "micro -l tcp://0.0.0.0:${PORT-80}",
     "dev-with-tunnel": "npm run tunnel & npm run dev",
     "tunnel": "cloudflared tunnel --url http://localhost:3000",

@@ -1,7 +1,7 @@
 import "./db.mjs";
 import GPT3Tokenizer from "gpt3-tokenizer";
 
-const tokenizer = new GPT3Tokenizer({type: "gpt3"});
+const tokenizer = new GPT3Tokenizer.default({type: "gpt3"});
 
 export default class User {
 
@@ -74,9 +74,10 @@ class UserMessages {
     }
 
     get tokens() {
-        return this.history.reduce((sum = 0, {content, role} = {}) => {
+        const sum = this.history.reduce((sum = 0, {content, role} = {}) => {
             return sum += tokenizer.encode(["", content, role, ""].join(" ")).bpe.length;
         }, 0);
+        return (sum * 1.1).toFixed(0);
     }
 
     get system() {

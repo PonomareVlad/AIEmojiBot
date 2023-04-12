@@ -28,7 +28,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
 
     constructor(...args) {
         super(...args);
-        this.plug(shortReply);
+        // this.plug(shortReply);
         this.mod("message", parseCommands);
         this.on("text", this.text.bind(this));
         // this.on("callbackQuery", this.callback.bind(this));
@@ -45,9 +45,9 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         reply.action("typing");
         const user = await User.fetch(chat);
         if (isCommand) return this.command(message);
-        const errorHandler = e => console.error(e) || reply.text(md.build(e.message));
+        const errorHandler = e => console.error(e) || reply.text(md.build(e.message || e));
+        const interval = setInterval(() => reply.action("typing"), 5 * 1000);
         try {
-            setInterval(() => reply.action("typing"), 5 * 1000);
             if (!user.messages.system) user.messages.system = context;
             user.messages.push({content: text, ids: [message_id]});
             const {
@@ -82,25 +82,29 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                 return messages;
             }, [[]]);
             const ids = [];
+            clearInterval(interval);
             await messages.reduce((promise, message) => {
                 if (Array.isArray(message))
                     return message.length ? promise.then(async () => {
                         const text = md(message.map(() => ""), ...message);
-                        const {message_id} = await reply.text(text, {parseMode: "MarkdownV2"});
-                        ids.push(message_id);
+                        const result = await reply.text(md.build(text), {parseMode: "MarkdownV2"});
+                        if (!result.message_id) throw result;
+                        ids.push(result.message_id);
                     }).catch(errorHandler) : promise;
                 return promise.then(async () => {
                     const {text: body} = message || {};
                     const options = {method: "post", body};
                     const url = `https://${VERCEL_URL}/api/send?id=${chat.id}`;
-                    const {message_id} = await fetch(url, options).then(r => r.json());
-                    ids.push(message_id);
+                    const result = await fetch(url, options).then(r => r.json());
+                    if (!result.message_id) throw result;
+                    ids.push(result.message_id);
                 }).catch(errorHandler);
             }, Promise.resolve()).catch(errorHandler);
             user.messages.push({content: result, role: "assistant", ids});
-            return await user.updateUser();
+            await user.updateUser();
         } catch (e) {
-            return errorHandler(e);
+            errorHandler(e);
+            clearInterval(interval);
         }
     }
 
@@ -125,6 +129,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                     history
                 } = user.messages;
                 if (!length) return reply.text(strings.empty);
+                const interval = setInterval(() => reply.action("typing"), 5 * 1000);
                 user.messages.push({content: summarize});
                 const max_tokens = maxTokens - tokens;
                 const result = await api.chat({max_tokens, messages: history});
@@ -132,6 +137,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                 user.messages.system = context;
                 user.messages.push({content: result, role: "assistant"});
                 await user.updateUser();
+                clearInterval(interval);
                 return reply.text(strings.summarized);
             }
             default:
