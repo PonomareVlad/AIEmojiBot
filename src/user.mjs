@@ -91,10 +91,12 @@ class UserMessages {
 
     push(data = {}) {
         const {
+            ids = [],
             content = "",
             role = "user"
         } = data || {};
         const message = {
+            ids: ids.filter(Boolean),
             content,
             role
         };

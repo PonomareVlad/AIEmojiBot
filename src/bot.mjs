@@ -37,28 +37,20 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
 
     async text(message = {}) {
         const {
+            message_id,
             isCommand,
             text = "",
             chat = {},
             reply = {},
         } = message || {};
+        reply.action("typing");
         const user = await User.fetch(chat);
         if (isCommand) return this.command(message);
+        const errorHandler = e => console.error(e) || reply.text(md.build(e.message));
         try {
-            reply.action("typing");
-            setTimeout(() => reply.action("typing"), 5 * 1000);
-            setTimeout(() => reply.action("typing"), 10 * 1000);
-            setTimeout(() => reply.action("typing"), 15 * 1000);
-            setTimeout(() => reply.action("typing"), 20 * 1000);
-            setTimeout(() => reply.action("typing"), 25 * 1000);
-            setTimeout(() => reply.action("typing"), 30 * 1000);
-            setTimeout(() => reply.action("typing"), 35 * 1000);
-            setTimeout(() => reply.action("typing"), 40 * 1000);
-            setTimeout(() => reply.action("typing"), 45 * 1000);
-            setTimeout(() => reply.action("typing"), 50 * 1000);
-            setTimeout(() => reply.action("typing"), 55 * 1000);
+            setInterval(() => reply.action("typing"), 5 * 1000);
             if (!user.messages.system) user.messages.system = context;
-            user.messages.push({content: text});
+            user.messages.push({content: text, ids: [message_id]});
             const {
                 length,
                 tokens,
@@ -68,7 +60,6 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
             console.debug("Messages:", {length, tokens});
             if (max_tokens < 1000) return reply.text(strings.limit);
             const result = await api.chat({max_tokens, messages: history});
-            user.messages.push({content: result, role: "assistant"});
             const structure = marked.lexer(result, {});
             const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
                 switch (type) {
@@ -76,7 +67,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                         messages.at(-1).push(...tokens.map(({type, text, raw}) => {
                             switch (type) {
                                 case "codespan":
-                                    return md.inlineCode(text)
+                                    return md.inlineCode(decode(text || raw))
                                 default:
                                     return decode(text || raw);
                             }
@@ -91,24 +82,26 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                 }
                 return messages;
             }, [[]]);
-            
+            const ids = [];
             await messages.reduce((promise, message) => {
                 if (Array.isArray(message))
-                    return message.length ? promise.then(() => {
+                    return message.length ? promise.then(async () => {
                         const text = md(message.map(() => ""), ...message);
-                        return reply.text(text, {parseMode: "MarkdownV2"});
-                    }) : promise;
-                return promise.then(() => {
+                        const {message_id} = await reply.text(text, {parseMode: "MarkdownV2"});
+                        ids.push(message_id);
+                    }).catch(errorHandler) : promise;
+                return promise.then(async () => {
                     const {text: body} = message || {};
                     const options = {method: "post", body};
                     const url = `https://${VERCEL_URL}/api/send?id=${chat.id}`;
-                    return fetch(url, options);
-                });
-            }, Promise.resolve());
-            await user.updateUser();
+                    const {message_id} = await fetch(url, options).then(r => r.json());
+                    ids.push(message_id);
+                }).catch(errorHandler);
+            }, Promise.resolve()).catch(errorHandler);
+            user.messages.push({content: result, role: "assistant", ids});
+            return await user.updateUser();
         } catch (e) {
-            console.error(e);
-            await reply.text(md.build(e.message));
+            return errorHandler(e);
         }
     }
 
