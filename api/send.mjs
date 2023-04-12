@@ -24,7 +24,6 @@ export default async ({query: {id}, body}, res) => {
             bot.sendDocument(chat_id, Buffer.from(body, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
             action
         ]);
-        console.debug(sticker);
         const [message] = await Promise.all([
             bot.sendDocument(id, sticker, {fileName: "sticker.tgs"}),
             bot.sendAction(id, "choose_sticker")

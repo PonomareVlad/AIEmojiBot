@@ -44,61 +44,66 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         } = message || {};
         const user = await User.fetch(chat);
         if (isCommand) return this.command(message);
-        reply.action("typing");
-        setTimeout(() => reply.action("typing"), 5 * 1000);
-        setTimeout(() => reply.action("typing"), 10 * 1000);
-        setTimeout(() => reply.action("typing"), 15 * 1000);
-        setTimeout(() => reply.action("typing"), 20 * 1000);
-        setTimeout(() => reply.action("typing"), 25 * 1000);
-        if (!user.messages.system) user.messages.system = context;
-        user.messages.push({content: text});
-        const {
-            length,
-            tokens,
-            history
-        } = user.messages;
-        const max_tokens = maxTokens - tokens;
-        console.debug("Messages:", {length, tokens});
-        if (max_tokens < 1000) return reply.text(strings.limit);
-        const result = await api.chat({max_tokens: 1000, messages: history});
-        user.messages.push({content: result, role: "assistant"});
-        const structure = marked.lexer(result, {});
-        const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
-            switch (type) {
-                case "paragraph":
-                    messages.at(-1).push(...tokens.map(({type, text, raw}) => {
-                        switch (type) {
-                            case "codespan":
-                                return md.inlineCode(text)
-                            default:
-                                return decode(text || raw);
-                        }
-                    }), `\r\n`);
-                    break;
-                case "code":
-                    messages.push({text, lang});
-                    messages.push([]);
-                    break;
-                default:
-                    messages.at(-1).push(decode(text || raw));
-            }
-            return messages;
-        }, [[]]);
-        await messages.reduce((promise, message) => {
-            if (Array.isArray(message))
-                return message.length ? promise.then(() => {
-                    const text = md(message.map(() => ""), ...message);
-                    console.debug(message, text);
-                    return reply.text(text, {parseMode: "MarkdownV2"});
-                }) : promise;
-            return promise.then(() => {
-                const {text: body} = message || {};
-                const options = {method: "post", body};
-                const url = `https://${VERCEL_URL}/api/send?id=${chat.id}`;
-                return fetch(url, options);
-            });
-        }, Promise.resolve());
-        await user.updateUser();
+        try {
+            reply.action("typing");
+            setTimeout(() => reply.action("typing"), 5 * 1000);
+            setTimeout(() => reply.action("typing"), 10 * 1000);
+            setTimeout(() => reply.action("typing"), 15 * 1000);
+            setTimeout(() => reply.action("typing"), 20 * 1000);
+            setTimeout(() => reply.action("typing"), 25 * 1000);
+            if (!user.messages.system) user.messages.system = context;
+            user.messages.push({content: text});
+            const {
+                length,
+                tokens,
+                history
+            } = user.messages;
+            const max_tokens = maxTokens - tokens;
+            console.debug("Messages:", {length, tokens});
+            if (max_tokens < 1000) return reply.text(strings.limit);
+            const result = await api.chat({max_tokens: 1000, messages: history});
+            user.messages.push({content: result, role: "assistant"});
+            const structure = marked.lexer(result, {});
+            const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
+                switch (type) {
+                    case "paragraph":
+                        messages.at(-1).push(...tokens.map(({type, text, raw}) => {
+                            switch (type) {
+                                case "codespan":
+                                    return md.inlineCode(text)
+                                default:
+                                    return decode(text || raw);
+                            }
+                        }), `\r\n`);
+                        break;
+                    case "code":
+                        messages.push({text, lang});
+                        messages.push([]);
+                        break;
+                    default:
+                        messages.at(-1).push(decode(text || raw));
+                }
+                return messages;
+            }, [[]]);
+            await messages.reduce((promise, message) => {
+                if (Array.isArray(message))
+                    return message.length ? promise.then(() => {
+                        const text = md(message.map(() => ""), ...message);
+                        return reply.text(text, {parseMode: "MarkdownV2"});
+                    }) : promise;
+                return promise.then(() => {
+                    const {text: body} = message || {};
+                    const options = {method: "post", body};
+                    const url = `https://${VERCEL_URL}/api/send?id=${chat.id}`;
+                    return fetch(url, options);
+                });
+            }, Promise.resolve());
+        } catch (e) {
+            console.error(e);
+            return reply.text(md.build(e.message));
+        } finally {
+            await user.updateUser();
+        }
     }
 
     async command({command, chat = {}, reply = {}} = {}) {
