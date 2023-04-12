@@ -6,8 +6,11 @@
   "main": "src/worker.mjs",
   "scripts": {
     "dev": "vc dev",
+    "env": "vercel env pull .env",
+    "start": "micro -l tcp://0.0.0.0:${PORT-80}",
     "dev-with-tunnel": "npm run tunnel & npm run dev",
-    "tunnel": "cloudflared tunnel --url http://localhost:3000"
+    "tunnel": "cloudflared tunnel --url http://localhost:3000",
+    "worker-env": "node --watch -r dotenv/config src/worker.mjs"
   },
   "dependencies": {
     "@ponomarevlad/marked": "^4.3.0-build.1",
@@ -22,6 +25,10 @@
     "telebot-utils": "^0.0.6",
     "telebot-vercel": "^1.0.1",
     "telegram-md": "^1.2.3"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3",
+    "micro": "^10.0.1"
   },
   "overrides": {
     "realm-web": "npm:@ponomarevlad/realm-web@^2.0.0-edge.1",
