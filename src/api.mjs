@@ -13,6 +13,10 @@ export default class API {
         };
     }
 
+    static sanitizeMessages = messages => {
+        return messages.map(({role, content}) => ({role, content})).filter(({role, content}) => role && content);
+    }
+
     async completions(options = {}) {
         const {
             api,
@@ -52,7 +56,11 @@ export default class API {
             "Authorization": `Bearer ${token}`
         }
         const url = new URL("chat/completions", api);
-        const body = JSON.stringify({model, messages, max_tokens});
+        const body = JSON.stringify({
+            model,
+            max_tokens,
+            messages: this.constructor.sanitizeMessages(messages),
+        });
         const config = {method: "post", headers, body};
         const response = await fetch(url, config);
         const data = await response.json();
