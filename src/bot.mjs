@@ -100,7 +100,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
             }, Promise.resolve());
         } catch (e) {
             console.error(e);
-            return reply.text(md.build(e.message));
+            await reply.text(md.build(e.message));
         } finally {
             await user.updateUser();
         }
