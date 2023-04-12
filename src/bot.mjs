@@ -51,6 +51,12 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
             setTimeout(() => reply.action("typing"), 15 * 1000);
             setTimeout(() => reply.action("typing"), 20 * 1000);
             setTimeout(() => reply.action("typing"), 25 * 1000);
+            setTimeout(() => reply.action("typing"), 30 * 1000);
+            setTimeout(() => reply.action("typing"), 35 * 1000);
+            setTimeout(() => reply.action("typing"), 40 * 1000);
+            setTimeout(() => reply.action("typing"), 45 * 1000);
+            setTimeout(() => reply.action("typing"), 50 * 1000);
+            setTimeout(() => reply.action("typing"), 55 * 1000);
             if (!user.messages.system) user.messages.system = context;
             user.messages.push({content: text});
             const {

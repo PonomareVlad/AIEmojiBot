@@ -8,8 +8,16 @@ globalThis.date = new Date();
 const {VERCEL_ENV} = process.env;
 
 export default async (request, context) => {
-    if (VERCEL_ENV === "development") return startHandler({bot}, request);
     globalThis.invocations = ++globalThis.invocations || 1;
-    context.waitUntil(startHandler({bot}, request));
-    return new Response(`OK`);
+    const handler = startHandler({bot}, request);
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+        start: controller => controller.enqueue(encoder.encode("O")),
+        async pull(controller) {
+            const result = await handler;
+            controller.enqueue(encoder.encode("K"));
+            return controller.close();
+        },
+    });
+    return new Response(stream);
 }
