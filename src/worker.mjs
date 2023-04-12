@@ -12,6 +12,6 @@ console.log(await bot?.setWebhook(href, undefined, undefined, 100));
 export default async (req) => {
     const body = await json(req).catch(() => ({}));
     let response = {status: false};
-    if (body?.update_id) response = await bot?.receiveUpdates([body]);
+    if (body?.update_id) bot?.receiveUpdates([body]);
     return response;
 }
