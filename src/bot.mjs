@@ -62,7 +62,6 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         if (max_tokens < 1000) return reply.text(strings.limit);
         const result = await api.chat({max_tokens, messages: history});
         user.messages.push({content: result, role: "assistant"});
-        await user.updateUser();
         const structure = marked.lexer(result, {});
         const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
             switch (type) {
@@ -85,7 +84,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
             }
             return messages;
         }, [[]]);
-        return messages.reduce((promise, message) => {
+        await messages.reduce((promise, message) => {
             if (Array.isArray(message))
                 return message.length ? promise.then(() => {
                     const text = md(message.map(() => ""), ...message);
@@ -99,6 +98,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                 return fetch(url, options);
             });
         }, Promise.resolve());
+        await user.updateUser();
     }
 
     async command({command, chat = {}, reply = {}} = {}) {
