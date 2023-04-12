@@ -10,7 +10,9 @@ import {NewMethodsMixin, parseCommands} from "telebot-utils";
 
 const {
     context,
-    tokens: maxTokens
+    summarize,
+    strings = {},
+    tokens: maxTokens = 4000
 } = config || {};
 
 const {
@@ -57,6 +59,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         } = user.messages;
         const max_tokens = maxTokens - tokens;
         console.debug("Messages:", {length, tokens});
+        if (max_tokens < 1000) return reply.text(strings.limit);
         const result = await api.chat({max_tokens, messages: history});
         user.messages.push({content: result, role: "assistant"});
         await user.updateUser();
@@ -102,16 +105,34 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         switch (command) {
             case "function":
                 return reply.text(`Invocations: ${globalThis.invocations}\r\nDate: ${globalThis.date}`);
-            case "start":
+            case "start": {
                 const user = await User.fetch(chat);
                 if (user?.messages?.length) {
                     user.messages.length = 0;
                     await user.updateUser();
-                    return reply.text(`You started a new conversation, the story was deleted`);
+                    return reply.text(strings.new);
                 }
-                return reply.text(`Send any description of your image`);
+                return reply.text(strings.tip);
+            }
+            case "summary": {
+                const user = await User.fetch(chat);
+                const {
+                    length,
+                    tokens,
+                    history
+                } = user.messages;
+                if (!length) return reply.text(strings.empty);
+                user.messages.push({content: summarize});
+                const max_tokens = maxTokens - tokens;
+                const result = await api.chat({max_tokens, messages: history});
+                user.messages.length = 0;
+                user.messages.system = context;
+                user.messages.push({content: result, role: "assistant"});
+                await user.updateUser();
+                return reply.text(strings.summarized);
+            }
             default:
-                return reply.text(`Send any description of your image`);
+                return reply.text(strings.tip);
         }
     }
 

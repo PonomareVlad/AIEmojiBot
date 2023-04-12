@@ -2,6 +2,14 @@
   "context": "You are a useful graphic designer, professionally designing images as SVG code.",
   "before": "Write the code for the SVG image:\r\n\r\n",
   "after": ".\r\n\r\nDon't use SVG layer filters. Don't use CSS <style> animations, only SVG Animations (SMIL). Use the <animate> tag instead of the <animateMotion> tag. All animations must not be longer than 3 seconds. Just write code, don't draw a picture. Don't write comments, just start your answer with <svg and end with </svg>.",
+  "summarize": "Summarize this conversation and print last variant of SVG code.",
   "api": "https://api.openai.com/v1/",
-  "tokens": 4000
+  "tokens": 4000,
+  "strings": {
+    "empty": "Empty conversation.",
+    "tip": "Send any description of your image.",
+    "new": "You started a new conversation, the story was deleted.",
+    "summarized": "Conversation summarized, now you can send next messages.",
+    "limit": "Before continuing the conversation, it is necessary to summarize with the command /summary."
+  }
 }
