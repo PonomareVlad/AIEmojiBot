@@ -3,6 +3,7 @@ import User from "./user.mjs";
 import {md} from "telegram-md";
 import config from "../config.json";
 import TeleBot from "@ponomarevlad/telebot";
+import {marked} from "@ponomarevlad/marked";
 import shortReply from "telebot/plugins/shortReply.js";
 import {NewMethodsMixin, parseCommands} from "telebot-utils";
 
@@ -44,14 +45,49 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         const {
             length,
             tokens,
-            history: messages
+            history
         } = user.messages;
         const max_tokens = maxTokens - tokens;
         console.debug("Messages:", {length, tokens});
-        const result = await api.chat({max_tokens, messages});
+        const result = await api.chat({max_tokens, messages: history});
         user.messages.push({content: result, role: "assistant"});
         await user.updateUser();
-        return reply.text(md.build(result), {parseMode: "MarkdownV2"});
+        const structure = marked.lexer(result, {});
+        const messages = structure.reduce((messages = [[]], {type, text, raw, lang, tokens} = {}) => {
+            switch (type) {
+                case "paragraph":
+                    messages.at(-1).push(...tokens.map(({type, text, raw}) => {
+                        switch (type) {
+                            case "codespan":
+                                return md.inlineCode(text)
+                            default:
+                                return text || raw;
+                        }
+                    }), `\r\n`);
+                    break;
+                case "code":
+                    messages.push({text, lang});
+                    messages.push([]);
+                    break;
+                default:
+                    messages.at(-1).push(text || raw);
+            }
+            return messages;
+        }, [[]]);
+        return messages.reduce((promise, message) => {
+            if (Array.isArray(message))
+                return message.length ? promise.then(() => {
+                    const text = md(message.map(() => ""), ...message);
+                    console.debug(message, text);
+                    return reply.text(text, {parseMode: "MarkdownV2"});
+                }) : promise;
+            return promise.then(() => {
+                const {text: body} = message || {};
+                const options = {method: "post", body};
+                const url = `https://${VERCEL_URL}/api/send?id=${chat.id}`;
+                return fetch(url, options);
+            });
+        }, Promise.resolve());
     }
 
     async command({command, chat = {}, reply = {}} = {}) {

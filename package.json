@@ -9,6 +9,7 @@
     "tunnel": "cloudflared tunnel --url http://localhost:3000"
   },
   "dependencies": {
+    "@ponomarevlad/marked": "^4.3.0-build.1",
     "@ponomarevlad/telebot": "edge",
     "form-data": "^4.0.0",
     "gpt3-tokenizer": "^1.1.5",
