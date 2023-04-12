@@ -13,10 +13,11 @@ const {
 } = config || {};
 
 const {
+    DEFAULT_URL,
     LOG_CHAT_ID,
     OPENAI_API_KEY,
     TELEGRAM_BOT_TOKEN,
-    VERCEL_URL = "ai-emoji-bot.vercel.app",
+    VERCEL_URL = DEFAULT_URL,
 } = process.env;
 
 const api = new API({context, token: OPENAI_API_KEY});
