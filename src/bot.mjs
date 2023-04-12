@@ -6,6 +6,7 @@ import TeleBot from "@ponomarevlad/telebot";
 import {marked} from "@ponomarevlad/marked";
 import shortReply from "telebot/plugins/shortReply.js";
 import {NewMethodsMixin, parseCommands} from "telebot-utils";
+import bot from "./bot.old.mjs";
 
 const {
     context,
@@ -41,6 +42,12 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
         } = message || {};
         const user = await User.fetch(chat);
         if (isCommand) return this.command(message);
+        reply.action("typing");
+        setTimeout(() => reply.action("typing"), 5 * 1000);
+        setTimeout(() => reply.action("typing"), 10 * 1000);
+        setTimeout(() => reply.action("typing"), 15 * 1000);
+        setTimeout(() => reply.action("typing"), 20 * 1000);
+        setTimeout(() => reply.action("typing"), 25 * 1000);
         if (!user.messages.system) user.messages.system = context;
         user.messages.push({content: text});
         const {
@@ -62,7 +69,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                             case "codespan":
                                 return md.inlineCode(text)
                             default:
-                                return text || raw;
+                                return raw || text;
                         }
                     }), `\r\n`);
                     break;
@@ -71,7 +78,7 @@ class AIEmojiBot extends NewMethodsMixin(TeleBot) {
                     messages.push([]);
                     break;
                 default:
-                    messages.at(-1).push(text || raw);
+                    messages.at(-1).push(raw || text);
             }
             return messages;
         }, [[]]);
