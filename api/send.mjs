@@ -9,7 +9,7 @@ const {
     TELEGRAM_BOT_TOKEN,
 } = process.env;
 
-const chat_id = parseInt(LOG_CHAT_ID);
+// const chat_id = parseInt(LOG_CHAT_ID);
 const bot = new TeleBot(TELEGRAM_BOT_TOKEN);
 
 export default async ({query: {id}, body}, res) => {
@@ -21,7 +21,7 @@ export default async ({query: {id}, body}, res) => {
         const {data} = optimize(svg, options);
         const [sticker] = await Promise.all([
             convert(data),
-            bot.sendDocument(chat_id, Buffer.from(body, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
+            // bot.sendDocument(chat_id, Buffer.from(body, "utf8"), {fileName: "sticker.svg"}).catch(e => e),
             action
         ]);
         const [message] = await Promise.all([
@@ -29,13 +29,13 @@ export default async ({query: {id}, body}, res) => {
             bot.sendAction(id, "choose_sticker")
         ]);
         const {message_id, chat: {id: from_chat_id}} = message || {};
-        await bot.forwardMessage(chat_id, from_chat_id, message_id).catch(e => e);
+        // await bot.forwardMessage(chat_id, from_chat_id, message_id).catch(e => e);
         return json(message);
     } catch (e) {
         res.status(500);
         console.error(e);
         const message = md.build(md.codeBlock(JSON.stringify(serializeError(e), null, 2), "json"));
-        await bot.sendMessage(chat_id, message, {parseMode: "MarkdownV2"});
+        // await bot.sendMessage(chat_id, message, {parseMode: "MarkdownV2"});
         return json(serializeError(e));
     }
 }
