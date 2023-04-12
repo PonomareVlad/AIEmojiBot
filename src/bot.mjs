@@ -1,10 +1,9 @@
 import API from "./api.mjs";
 import User from "./user.mjs";
+import TeleBot from "telebot";
+import {marked} from "marked";
 import {md} from "telegram-md";
 import decode from "html-entities-decoder";
-import TeleBot from "@ponomarevlad/telebot";
-import {marked} from "@ponomarevlad/marked";
-import shortReply from "telebot/plugins/shortReply.js";
 import config from "../config.json" assert {type: "json"};
 import {NewMethodsMixin, parseCommands} from "telebot-utils";
 

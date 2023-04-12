@@ -1,25 +1,14 @@
-import * as Realm from "realm-web";
+import {MongoClient} from "mongodb";
 
 const {
-    APP_ID: id,
-    REALM_API_KEY,
+    MONGODB_URI,
     DATABASE_NAME,
-    DATA_SOURCE_NAME,
 } = process.env;
 
-export async function initMongo() {
-    try {
-        const app = new Realm.App({id});
-        const credentials = Realm.Credentials.apiKey(REALM_API_KEY);
-        const user = await app.logIn(credentials);
-        const mongo = globalThis.mongo = user.mongoClient(DATA_SOURCE_NAME);
-        globalThis.db = mongo.db(DATABASE_NAME);
-        return mongo;
-    } catch (e) {
-        console.error(e);
-    }
-}
+const options = {ignoreUndefined: true};
 
-export const mongo = globalThis.mongoReady ??= initMongo();
+export const mongo = globalThis.mongo ??= await MongoClient.connect(MONGODB_URI, options);
+
+export const db = globalThis.db ??= mongo.db(DATABASE_NAME);
 
 export default mongo;
