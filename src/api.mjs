@@ -45,7 +45,7 @@ export default class API {
             prompt,
             context,
             max_tokens,
-            model = "gpt-3.5-turbo",
+            model = "gpt-4-turbo-preview",
             messages = [
                 {role: "system", content: context},
                 {role: "user", content: prompt}
